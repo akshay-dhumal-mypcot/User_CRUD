@@ -48,34 +48,37 @@ namespace User_CRUD.Controllers
             return Ok(id);
         }
 
-        [HttpGet("{idOrDummy}")]
-        public async Task<IActionResult> GetUserByIdOrDummy(string idOrDummy)
+        // GET: api/user/all
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
         {
-            if (idOrDummy == "dummy")
+            try
             {
-                var response = new
+                var users = await _context.users.ToListAsync();
+
+                if (users == null || users.Count == 0)
+                {
+                    return NotFound(new { success = false, message = "No users found" });
+                }
+
+                return Ok(new
                 {
                     success = true,
-                    message = "Dummy API working successfully",
-                    serverTime = DateTime.UtcNow,
-                    data = new[]
-                    {
-                new { id = 1, name = "Akshay", email = "akshay@test.com", role = "Admin" },
-                new { id = 2, name = "John", email = "john@test.com", role = "User" }
+                    message = "Users retrieved successfully",
+                    count = users.Count,
+                    data = users
+                });
             }
-                };
-                return Ok(response);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "An error occurred while retrieving users",
+                    error = ex.Message
+                });
             }
-
-            if (!int.TryParse(idOrDummy, out int id))
-                return BadRequest("ID must be an integer");
-
-            var user = await _context.users.FindAsync(id);
-            if (user == null) return NotFound();
-            return Ok(user);
         }
-
-
 
     }
 }
