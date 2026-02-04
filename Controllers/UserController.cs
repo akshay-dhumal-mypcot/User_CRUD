@@ -47,5 +47,36 @@ namespace User_CRUD.Controllers
             await _context.SaveChangesAsync();
             return Ok(id);
         }
+
+        [HttpGet("dummy")]
+        public IActionResult GetDummyData()
+        {
+            var response = new
+            {
+                success = true,
+                message = "Dummy API working successfully",
+                serverTime = DateTime.UtcNow,
+                data = new[]
+                {
+            new
+            {
+                id = 1,
+                name = "Akshay",
+                email = "akshay@test.com",
+                role = "Admin"
+            },
+            new
+            {
+                id = 2,
+                name = "John",
+                email = "john@test.com",
+                role = "User"
+            }
+        }
+            };
+
+            return Ok(response);
+        }
+
     }
 }
