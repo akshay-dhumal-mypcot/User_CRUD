@@ -48,35 +48,33 @@ namespace User_CRUD.Controllers
             return Ok(id);
         }
 
-        [HttpGet("dummy")]
-        public IActionResult GetDummyData()
+        [HttpGet("{idOrDummy}")]
+        public async Task<IActionResult> GetUserByIdOrDummy(string idOrDummy)
         {
-            var response = new
+            if (idOrDummy == "dummy")
             {
-                success = true,
-                message = "Dummy API working successfully",
-                serverTime = DateTime.UtcNow,
-                data = new[]
+                var response = new
                 {
-            new
-            {
-                id = 1,
-                name = "Akshay",
-                email = "akshay@test.com",
-                role = "Admin"
-            },
-            new
-            {
-                id = 2,
-                name = "John",
-                email = "john@test.com",
-                role = "User"
+                    success = true,
+                    message = "Dummy API working successfully",
+                    serverTime = DateTime.UtcNow,
+                    data = new[]
+                    {
+                new { id = 1, name = "Akshay", email = "akshay@test.com", role = "Admin" },
+                new { id = 2, name = "John", email = "john@test.com", role = "User" }
             }
-        }
-            };
+                };
+                return Ok(response);
+            }
 
-            return Ok(response);
+            if (!int.TryParse(idOrDummy, out int id))
+                return BadRequest("ID must be an integer");
+
+            var user = await _context.users.FindAsync(id);
+            if (user == null) return NotFound();
+            return Ok(user);
         }
+
 
 
     }
