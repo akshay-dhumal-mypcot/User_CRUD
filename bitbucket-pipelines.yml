@@ -4,20 +4,23 @@ pipelines:
   branches:
     main:
       - step:
-          name: Build & Publish User_CRUD (.NET 8)
-          caches:
-            - dotnetcore
-          script:
-            - dotnet restore
-            - dotnet publish User_CRUD/User_CRUD.csproj -c Release -o publish
-
-      - step:
-          name: Deploy to AWS EC2
+          name: Build & Deploy to EC2
           deployment: production
           script:
+            - dotnet restore
+            - dotnet publish User_CRUD.csproj -c Release -o publish
+
             - pipe: atlassian/scp-deploy:1.5.0
               variables:
-                USER: $EC2_USER
+                USER: ubuntu
                 SERVER: $EC2_HOST
                 REMOTE_PATH: /var/www/usercrud
-                LOCAL_PATH: publish
+                LOCAL_PATH: publish/*
+
+            - pipe: atlassian/ssh-run:0.6.1
+              variables:
+                SSH_USER: ubuntu
+                SERVER: $EC2_HOST
+                COMMAND: |
+                  sudo systemctl restart usercrud
+                  sudo systemctl status usercrud --no-pager
