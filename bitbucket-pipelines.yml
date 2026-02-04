@@ -10,6 +10,11 @@ pipelines:
             - dotnet restore
             - dotnet publish User_CRUD.csproj -c Release -o publish
 
+            # Trust EC2 host
+            - mkdir -p ~/.ssh
+            - ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
+
+            # Copy files
             - pipe: atlassian/scp-deploy:1.5.0
               variables:
                 USER: ubuntu
@@ -17,6 +22,7 @@ pipelines:
                 REMOTE_PATH: /var/www/usercrud
                 LOCAL_PATH: publish/*
 
+            # Restart service
             - pipe: atlassian/ssh-run:0.6.1
               variables:
                 SSH_USER: ubuntu
