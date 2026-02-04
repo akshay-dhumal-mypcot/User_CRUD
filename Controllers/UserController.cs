@@ -49,7 +49,7 @@ namespace User_CRUD.Controllers
         }
 
         // GET: api/user/all
-        [HttpGet("all")]
+        [HttpGet("allusers")]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
         {
             try
