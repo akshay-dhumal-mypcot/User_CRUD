@@ -15,4 +15,4 @@ pipelines:
                 USER: ubuntu
                 SERVER: $EC2_HOST
                 REMOTE_PATH: /var/www/usercrud
-                LOCAL_PATH: publish/
+                LOCAL_PATH: publish/*
