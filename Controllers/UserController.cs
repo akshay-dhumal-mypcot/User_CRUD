@@ -48,37 +48,5 @@ namespace User_CRUD.Controllers
             return Ok(id);
         }
 
-        // GET: api/user/all
-        [HttpGet("allusers")]
-        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
-        {
-            try
-            {
-                var users = await _context.users.ToListAsync();
-
-                if (users == null || users.Count == 0)
-                {
-                    return NotFound(new { success = false, message = "No users found" });
-                }
-
-                return Ok(new
-                {
-                    success = true,
-                    message = "Users retrieved successfully",
-                    count = users.Count,
-                    data = users
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    success = false,
-                    message = "An error occurred while retrieving users",
-                    error = ex.Message
-                });
-            }
-        }
-
     }
 }
