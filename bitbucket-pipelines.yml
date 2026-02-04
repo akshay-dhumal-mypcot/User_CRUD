@@ -7,20 +7,24 @@ pipelines:
           name: Build & Deploy to EC2
           deployment: production
           script:
+            # Install SSH tools (FIX)
+            - apt-get update && apt-get install -y openssh-client
+
+            # Build
             - dotnet restore
             - dotnet publish User_CRUD.csproj -c Release -o publish
 
-            # Trust EC2 host
+            # Prepare SSH
             - mkdir -p ~/.ssh
             - ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
 
-            # Copy files
-            - pipe: atlassian/scp-deploy:1.5.0
+            # Copy files to EC2
+            - pipe: atlassian/scp-deploy:1.6.0
               variables:
                 USER: ubuntu
                 SERVER: $EC2_HOST
                 REMOTE_PATH: /var/www/usercrud
-                LOCAL_PATH: publish/*
+                LOCAL_PATH: publish/
 
             # Restart service
             - pipe: atlassian/ssh-run:0.6.1
