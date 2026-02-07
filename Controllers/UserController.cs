@@ -45,7 +45,7 @@ namespace User_CRUD.Controllers
         {
             _context.Remove(id);
             await _context.SaveChangesAsync();
-            return Ok(id);
+            //return Ok(id);
         }
 
     }
